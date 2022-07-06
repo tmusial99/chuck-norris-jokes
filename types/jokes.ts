@@ -10,12 +10,10 @@ export type jokeType = {
 export type multipleJokesType = {
   type: "success" | string;
   value: {
-    value: {
-      id: number;
-      joke: string;
-      categories: string[];
-    }[];
-  };
+    id: number;
+    joke: string;
+    categories: string[];
+  }[];
 };
 
 export type categoriesType = {

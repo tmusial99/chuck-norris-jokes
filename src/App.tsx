@@ -1,4 +1,4 @@
-import parse from "html-react-parser";
+import { saveAs } from "file-saver";
 import { ChangeEvent, useEffect, useState } from "react";
 import "./App.css";
 import { fetchJokes } from "./utils/fetchJokes";
@@ -9,6 +9,7 @@ function App() {
   const [categories, setCategories] = useState<null | string[]>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [name, setName] = useState("");
+  const [amountOfJokes, setAmountOfJokes] = useState("5");
   const [nameError, setNameError] = useState({
     isError: false,
     errorMsg: "",
@@ -24,9 +25,7 @@ function App() {
           ? undefined
           : [name.split(/\W+/)[0], name.split(" ")[1]],
     });
-    typeof joke === "string"
-      ? setJoke(joke)
-      : setJoke(parse(joke.joke).toString());
+    typeof joke === "string" ? setJoke(joke) : setJoke(joke.joke);
   };
   const getCategories = async () => {
     try {
@@ -56,6 +55,29 @@ function App() {
         errorMsg: "",
       });
     setName(value);
+  };
+
+  const downloadAsTxt = async () => {
+    try {
+      const jokes = await fetchJokes.randomJokes(parseInt(amountOfJokes), {
+        withCustomCategory:
+          selectedCategory === "all" ? undefined : selectedCategory,
+        withCustomName:
+          nameError.isError || name === ""
+            ? undefined
+            : [name.split(/\W+/)[0], name.split(" ")[1]],
+      });
+      const jokesInArray = jokes.map((x) => x.joke);
+      const jokesInStringWithNewLineChars = jokesInArray.join("\n");
+      const blob = new Blob([jokesInStringWithNewLineChars], {
+        type: "text/plain;charset=utf-8",
+      });
+      saveAs(blob, "funnyJokes.txt");
+    } catch {
+      alert(
+        "Chuck Norris API is currently unavailable. Please try to reload the page."
+      );
+    }
   };
 
   useEffect(() => {
@@ -107,6 +129,25 @@ function App() {
         {nameError.isError && (
           <div className="inputError">{nameError.errorMsg}</div>
         )}
+      </div>
+      <div className="flex-row" style={{ marginTop: "20px" }}>
+        <input
+          type="number"
+          min={1}
+          max={999}
+          placeholder="Amount"
+          value={amountOfJokes}
+          onChange={(e) => setAmountOfJokes(e.target.value)}
+          onBlur={() =>
+            setAmountOfJokes((curr) => {
+              const roundedNumber = Math.round(parseInt(curr));
+              if (roundedNumber > 999) return "999";
+              else if (roundedNumber < 1) return "1";
+              else return roundedNumber.toString();
+            })
+          }
+        />
+        <button onClick={downloadAsTxt}>Save jokes</button>
       </div>
     </div>
   );

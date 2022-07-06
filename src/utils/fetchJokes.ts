@@ -8,7 +8,9 @@ type fetchJokeOptions = {
 
 export const fetchJokes = {
   randomJoke: async (options?: fetchJokeOptions) => {
-    const apiURL = new URL("http://api.icndb.com/jokes/random");
+    const apiURL = new URL(
+      "http://api.icndb.com/jokes/random/?escape=javascript"
+    );
     if (options?.withCustomName) {
       apiURL.searchParams.append("firstName", options.withCustomName[0]);
       apiURL.searchParams.append("lastName", options.withCustomName[1]);
@@ -28,7 +30,9 @@ export const fetchJokes = {
     if (quantity <= 0 || !Number.isInteger(quantity))
       throw Error("Quantity must be positive integer type number");
 
-    const apiURL = new URL(`http://api.icndb.com/jokes/random/${quantity}`);
+    const apiURL = new URL(
+      `http://api.icndb.com/jokes/random/${quantity}?escape=javascript`
+    );
 
     if (options?.withCustomName) {
       apiURL.searchParams.append("firstName", options.withCustomName[0]);
