@@ -1,3 +1,3 @@
 # Chuck Norris Jokes App
 
-LIVE: {URL}
+LIVE: https://chuck-norris-jokes-nu.vercel.app/
