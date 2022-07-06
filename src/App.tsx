@@ -1,5 +1,5 @@
 import parse from "html-react-parser";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import "./App.css";
 import { fetchJokes } from "./utils/fetchJokes";
 import { capitalizeFirstLetter } from "./utils/helpers";
@@ -8,12 +8,21 @@ function App() {
   const [joke, setJoke] = useState<null | string>(null);
   const [categories, setCategories] = useState<null | string[]>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [name, setName] = useState("");
+  const [nameError, setNameError] = useState({
+    isError: false,
+    errorMsg: "",
+  });
   const [isError, setIsError] = useState(false);
 
   const getJoke = async () => {
     const joke = await fetchJokes.randomJoke({
       withCustomCategory:
         selectedCategory === "all" ? undefined : selectedCategory,
+      withCustomName:
+        nameError.isError || name === ""
+          ? undefined
+          : [name.split(/\W+/)[0], name.split(" ")[1]],
     });
     typeof joke === "string"
       ? setJoke(joke)
@@ -26,6 +35,27 @@ function App() {
     } catch {
       setIsError(true);
     }
+  };
+  const changeName = async (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const splittedValues = value.split(" ");
+    if (splittedValues.length !== 2 || splittedValues[1] === "")
+      setNameError({
+        isError: true,
+        errorMsg: "Invalid name.",
+      });
+    else
+      setNameError({
+        isError: false,
+        errorMsg: "",
+      });
+
+    if (value === "")
+      setNameError({
+        isError: false,
+        errorMsg: "",
+      });
+    setName(value);
   };
 
   useEffect(() => {
@@ -47,8 +77,13 @@ function App() {
     <div className="container">
       <p className="joke">{joke}</p>
       <div className="flex-row">
-        <button onClick={getJoke}>Draw a Chuck Norris joke</button>
+        <button onClick={getJoke}>{`Draw a ${
+          name === "" || nameError.isError ? "Chuck Norris" : name
+        } joke`}</button>
+        <label htmlFor="categories">Category:</label>
         <select
+          name="categories"
+          id="categories"
           value={selectedCategory as string}
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
@@ -59,6 +94,19 @@ function App() {
             </option>
           ))}
         </select>
+      </div>
+      <div style={{ marginTop: "10px" }}>
+        <label htmlFor="changeName">Impersonate Chuck Norris: </label>
+        <input
+          type="text"
+          id="changeName"
+          name="changeName"
+          value={name}
+          onChange={changeName}
+        />
+        {nameError.isError && (
+          <div className="inputError">{nameError.errorMsg}</div>
+        )}
       </div>
     </div>
   );
