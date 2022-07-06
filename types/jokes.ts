@@ -3,7 +3,7 @@ export type jokeType = {
   value: {
     id: number;
     joke: string;
-    categories: [] | string[];
+    categories: string[];
   };
 };
 
@@ -13,14 +13,14 @@ export type multipleJokesType = {
     value: {
       id: number;
       joke: string;
-      categories: [] | string[];
+      categories: string[];
     }[];
   };
 };
 
 export type categoriesType = {
   type: "success" | string;
-  value: ["explicit", "nerdy"] | string[];
+  value: string[];
 };
 
 export type numberOfJokesType = {

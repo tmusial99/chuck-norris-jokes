@@ -10,3 +10,8 @@
   max-width: 1000px;
   margin: 1rem;
 }
+
+.flex-row {
+  display: flex;
+  gap: 0.5rem;
+}

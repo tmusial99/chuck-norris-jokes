@@ -1,5 +1,5 @@
 import axios from "axios";
-import { jokeType, multipleJokesType } from "../../types/jokes";
+import { categoriesType, jokeType, multipleJokesType } from "../../types/jokes";
 
 type fetchJokeOptions = {
   withCustomName?: [firstName: string, lastName: string];
@@ -41,6 +41,18 @@ export const fetchJokes = {
     try {
       const { data }: { data: multipleJokesType } = await axios.get(
         apiURL.toString()
+      );
+      return data.value;
+    } catch {
+      throw Error(
+        "Chuck Norris API is currently unavailable. Please try again later."
+      );
+    }
+  },
+  categories: async () => {
+    try {
+      const { data }: { data: categoriesType } = await axios.get(
+        "http://api.icndb.com/categories"
       );
       return data.value;
     } catch {
