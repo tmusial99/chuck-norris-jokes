@@ -1,0 +1,12 @@
+.joke {
+  font-size: 2rem;
+}
+.joke::before,
+.joke::after {
+  content: '"';
+}
+
+.container {
+  max-width: 1000px;
+  margin: 1rem;
+}
